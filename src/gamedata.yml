@@ -1,0 +1,158 @@
+globals:
+  - information
+  - wisdom
+  - life
+
+items:
+  - food
+  - water
+  - story
+
+complaints:
+  - id: hungry
+    adj: "hungry"
+    when:
+      - item: food
+        comp: less
+        value: 50
+    provides:
+      - life_expectancy: -0.005
+
+  - id: thirsty
+    adj: "thirsty"
+    when:
+      - item: water
+        comp: less
+        value: 50
+    provides:
+      - life_expectancy: -0.005
+
+  - id: tired
+    adj: "tired"
+    duration: 60
+    when:
+      - random: 60 //interval, second
+        comp: less
+        value: 0.05
+    provides:
+      - life_expectancy: -0.005
+
+  - id: cold
+    adj: "cold"
+    duration: 60
+    when:
+      - random: 60 //interval, second
+        comp: less
+        value: 0.005
+    provides:
+      - life_expectancy: -0.005
+
+  - id: wet
+    adj: "wet"
+    duration: 60
+    when:
+      - random: 60 //interval, second
+        comp: less
+        value: 0.0005
+    provides:
+      - life_expectancy: -0.005
+
+actions:
+  - id: moan
+    verb: "moan"
+    duration: 1
+    provides:
+      - information: 1
+      - information_retention: 1
+    depends:
+      - information: 0
+
+  - id: gather_food
+    verb: "gather food"
+    provides:
+      - information: 5
+      - information_retention: 2
+    duration: 50
+    depends:
+      - information: 5
+
+  - id: eat
+    verb: "eat"
+    duration: 10
+    depends:
+      - information: 10
+      - actions:
+          - gather_food
+    provides:
+      - information: 1
+      - information_retention: 0
+      - items:
+          - food: 10
+
+  - id: talk
+    verb: "talk"
+    provides:
+      - information: 2
+      - information_retention: 3
+    duration: 3
+    depends:
+      - information: 5
+      - actions:
+          - moan
+
+  - id: sing
+    verb: "sing"
+    provides:
+      - information: 4
+      - information_retention: 1000
+    duration: 15
+    depends:
+      - information: 20
+      - actions:
+          - talk
+
+  - id: invent_story
+    verb: "invent a story"
+    provides:
+      - information: 10
+      - information_retention: 500
+    duration: 30
+    depends:
+      - information: 500
+      - actions:
+          - talk
+
+  - id: draw
+    verb: "draw"
+    provides:
+      - information: 10
+      - information_retention: 60000
+    duration: 500
+    depends:
+      - information: 10000
+      - actions:
+          - invent_story
+
+  - id: teach
+    verb: "teach"
+    provides:
+      - information: 50
+      - information_retention: 1000
+    duration: 100
+    depends:
+      - information: 1000
+      - information_retention: 1000
+      - actions:
+          - invent_story
+
+  - id: question
+    verb: "question"
+    provides:
+      - information: 1000
+      - information_retention: 200
+      - wisdom: 1
+    duration: 2000
+    depends:
+      - information: 5000
+      - actions:
+          - teach
