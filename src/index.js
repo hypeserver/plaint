@@ -1,13 +1,13 @@
-import Engine from "./Engine";
+import { Engine } from "./engine";
 import UI from "./UI";
-import gamedata from "json-loader!yaml-loader!./gamedata.yml";
-
-console.log(gamedata);
+import gameConfiguration from "json-loader!yaml-loader!./gamedata.yml";
 
 const engine = new Engine({
-  gamedata
+  gameConfiguration
 });
 
 const ui = new UI({
   engine
 });
+
+ui.render();

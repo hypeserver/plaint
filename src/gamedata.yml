@@ -1,182 +1,32 @@
-globals:
-  - information
-  - wisdom
-  - life_expectancy
-  - information_retention
+config:
+  tick_ms: 1000
 
-items:
-  - food
-  - water
-  - story
+model:
+  $level: level1
+  $time: 0
+  $counter: 0
+  $decreasing_value: 5
 
-state:
-  - id: hungry
-    adj: "hungry"
-    when:
-      - item: food
-        comp: less
-        value: 50
+levels:
+  - name: level1
+  - name: level2
+  - name: level3
+
+commands:
+  :tick:
+    on: "@tick"
     effects:
-      - globals:
-        - life_expectancy: -0.005
+      - [SET, $time, [ADD, [GET, $time], 1]]
 
-  - id: thirsty
-    adj: "thirsty"
-    when:
-      - item: water
-        comp: less
-        value: 50
+  :handle_time:
+    on: "@change_$time"
+    pre_conditions:
+      - [GT, [GET, $decreasing_value], 0]
     effects:
-      - globals:
-        - life_expectancy: -0.005
+      - [LOG, [GET, $decreasing_value]]
+      - [SET, $decreasing_value, [ADD, [GET, $decreasing_value], -1]]
 
-  - id: tired
-    adj: "tired"
-    duration: 60
-    when:
-      - random: 60 //interval, second
-        comp: less
-        value: 0.05
+  :click:
     effects:
-      - globals:
-        - life_expectancy: -0.005
-
-  - id: cold
-    adj: "cold"
-    duration: 60
-    when:
-      - random: 60 //interval, second
-        comp: less
-        value: 0.005
-    effects:
-      - globals:
-        - life_expectancy: -0.005
-
-  - id: wet
-    adj: "wet"
-    duration: 60
-    when:
-      - random: 60 //interval, second
-        comp: less
-        value: 0.0005
-    effects:
-      - globals:
-        - life_expectancy: -0.005
-
-actions:
-  - id: moan
-    verb: "moan"
-    duration: 1
-    effects:
-      - globals: 
-        - information: 1
-        - information_retention: 1
-    depends:
-      - globals:
-        - information: 0
-
-  - id: gather_food
-    verb: "gather food"
-    effects:
-      - globals:
-        - information: 5
-        - information_retention: 2
-    duration: 50
-    depends:
-      - globals:
-        - information: 5
-
-  - id: eat
-    verb: "eat"
-    duration: 10
-    depends:
-      - globals:
-        - information: 10
-      - actions:
-        - gather_food
-    effects:
-      - globals:
-        - information: 1
-        - information_retention: 0
-      - items:
-        - food: 10
-
-  - id: talk
-    verb: "talk"
-    effects:
-      - globals:
-        - information: 2
-        - information_retention: 3
-    duration: 3
-    depends:
-      - global:
-        - information: 5
-      - actions:
-        - moan
-
-  - id: sing
-    verb: "sing"
-    effects:
-      - globals:
-        - information: 4
-        - information_retention: 1000
-    duration: 15
-    depends:
-      - globals:
-        - information: 20
-      - actions:
-        - talk
-
-  - id: invent_story
-    verb: "invent a story"
-    effects:
-      - globals:
-        - information: 10
-        - information_retention: 500
-    duration: 30
-    depends:
-      - globals:
-        - information: 500
-      - actions:
-        - talk
-
-  - id: draw
-    verb: "draw"
-    effects:
-      - globals:
-        - information: 10
-        - information_retention: 60000
-    duration: 500
-    depends:
-      - globals:
-        - information: 10000
-      - actions:
-        - invent_story
-
-  - id: teach
-    verb: "teach"
-    effects:
-      - globals:
-        - information: 50
-        - information_retention: 1000
-    duration: 100
-    depends:
-      - globals:
-        - information: 1000
-        - information_retention: 1000
-      - actions:
-        - invent_story
-
-  - id: question
-    verb: "question"
-    effects:
-      - globals:
-        - information: 1000
-        - information_retention: 200
-        - wisdom: 1
-    duration: 2000
-    depends:
-      - globals:
-        - information: 5000
-      - actions:
-        - teach
+      - [SET, $counter, [ADD, [GET, $counter], 1]]
+      - [SET, $decreasing_value, [ADD, [GET, $decreasing_value], 2]]
